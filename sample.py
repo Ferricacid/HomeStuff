@@ -1,7 +1,7 @@
 # pip install pandas
 # pip install pandasql
-import pandas
-import pandasql
+import pandas as pd
+import pandasql as ps
 import glob
 import matplotlib.pyplot as plt
 
@@ -13,7 +13,6 @@ def start():
     print('~~~~😊家庭物品位置记录器·首页~~~~~~')
     print('')
     actions = ['查看物品位置信息', '查看区域和位置', '补全excel', '退出']
-    count = len(actions)
     print('---------功能----------')
     i = 0
     for a in actions:
@@ -111,7 +110,6 @@ def searchIt():
     print(placedf[:50])
     print('**所有区域和位置总览结束**')
     actions2 = ['搜索区域的位置信息（附图）', '搜索区域或位置的物品', '搜索位置的物品', '返回']
-    count = len(actions2)
     print('---------功能----------')
     i = 0
     for a in actions2:

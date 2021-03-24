@@ -1,5 +1,7 @@
 # pip install pandas
 # pip install pandasql
+# pip install jieba
+# pip install wordcloud
 import pandas as pd
 import pandasql as ps
 import glob
@@ -12,7 +14,7 @@ def start():
     print('')
     print('~~~~😊家庭物品位置记录器·首页~~~~~~')
     print('')
-    actions = ['查看物品位置信息', '查看区域和位置', '补全excel', '退出']
+    actions = ['查看物品位置信息', '查看区域和位置', '补全excel', '调查重复物品、生成词云', '退出']
     print('---------功能----------')
     i = 0
     for a in actions:
@@ -75,7 +77,7 @@ def look(place, file):
 
 
 def viewImg(target):
-    tar_path = 'sample_image\\*' + target + '*.*'
+    tar_path = imgFolder + '\\*' + target + '*.*'
     files = glob.glob(tar_path,
                       recursive=True)
     for f in files:
@@ -143,13 +145,69 @@ def fillForm():
                         , m.物品\
                         from placedf p join maindf m on p.位置 = m.位置;"
                 res3 = ps.sqldf(sqlstr)
-                res3.to_excel(main)
+                res3.to_excel(main, index=False)
                 print('成功将结果写入' + main)
             elif ask == 'n':
                 wait = 1
                 print('不改了')
     else:
         print('没有需要补充的')
+    start()
+    return
+
+
+def cloud(list_all):
+    import jieba
+    empty_str = " "
+    str_all = empty_str.join(list_all)
+    seg_list = jieba.cut(str_all, cut_all=False)
+    object_list = []
+    for word in seg_list:
+        if word != ' ' and word != '\xa0':
+            object_list.append(word)
+    import wordcloud
+    w = wordcloud.WordCloud(width=1000,
+                            height=700,
+                            background_color='white',
+                            font_path='STZHONGS.TTF')
+    str_empty = " "
+    str_all2 = str_empty.join(object_list)
+    w.generate(str_all2)
+    import datetime
+    cloudName = '词云' + str(datetime.date.today()) + '.png'
+    w.to_file(cloudName)
+    print('下载完毕')
+    figsize(40, 20)
+    im = plt.imread(cloudName)
+    plt.imshow(im)
+    plt.axis('off')
+    plt.show()
+
+
+def freqWords():
+    print('------------调查重复出现的物品-----------')
+    splidf = maindf['物品'].str.split('、')
+    list_all = []
+    for i in splidf[:-1]:
+        list_all += i
+    import numpy as np
+    num = 1000000
+    summary = dict(zip(*np.unique(list_all, return_counts=True)))
+    summary = dict(sorted(summary.items(), key=lambda d: d[1], reverse=True))
+    import itertools
+    print('物品的出现次数排名如下：')
+    summary = dict(itertools.islice(summary.items(), 10))
+    print(summary)
+    wait = 0
+    while wait == 0:
+        ask = input('此处有一份词云报告，是否下载？[y/n]')
+        if ask == 'y':
+            wait = 1
+            cloud(list_all)
+        elif ask == 'n':
+            wait = 1
+    print('')
+    print('返回上级界面......')
     start()
     return
 
@@ -162,6 +220,8 @@ def checkAct(actions, action):
     elif action == 2:
         fillForm()
     elif action == 3:
+        freqWords()
+    elif action == 4:
         print('选择了' + actions[action])
         print('自己关掉')
         return
@@ -171,5 +231,6 @@ main = 'sample_main.xlsx'
 maindf = pd.read_excel(main,header=0)
 place = 'sample_place.xlsx'
 placedf = pd.read_excel(place,header=0)
+imgFolder = 'sample_image'
 start()
 

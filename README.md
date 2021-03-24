@@ -37,7 +37,5 @@ Manage the placement of stuff at home. Designed for family members with differen
    查缺补漏：补全缺失的区域名称
   
  To-do:
- * 显示重复出现的物品
  * 收录非官方的区域位置说法
- * 分析家中物品（？）
  

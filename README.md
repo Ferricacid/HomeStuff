@@ -1,4 +1,4 @@
-# HomeStuff
+# HomeStuff 家庭物品位置记录
  Manage the placement of stuff at home. Designed for family members with different prefences.
 
  最近刚刚搬家，家里的东西实在是多，感觉最好搞个能记录不常用物品位置的东西。

@@ -14,7 +14,7 @@ def start():
     print('')
     print('~~~~😊家庭物品位置记录器·首页~~~~~~')
     print('')
-    actions = ['查看物品位置信息', '查看区域和位置', '补全excel', '调查重复物品、生成词云', '退出']
+    actions = ['查看物品位置信息', '查看区域和位置', '补全excel', '调查重复物品、生成词云','更新收录地点excel', '退出']
     print('---------功能----------')
     i = 0
     for a in actions:
@@ -187,11 +187,13 @@ def cloud(list_all):
 def freqWords():
     print('------------调查重复出现的物品-----------')
     splidf = maindf['物品'].str.split('、')
+    splidf = splidf.dropna(axis=0)
+    print(splidf)
     list_all = []
-    for i in splidf[:-1]:
-        list_all += i
+    for i in splidf:
+        if i != None:
+            list_all += i
     import numpy as np
-    num = 1000000
     summary = dict(zip(*np.unique(list_all, return_counts=True)))
     summary = dict(sorted(summary.items(), key=lambda d: d[1], reverse=True))
     import itertools
@@ -211,6 +213,36 @@ def freqWords():
     start()
     return
 
+def generate_loc():
+    print('')
+    print('---------🌇更新地点文件----------')
+    print('')
+    query = 'select distinct 位置,区域 from maindf where 区域 is not null and 位置 is not null'
+    extra_loc = ps.sqldf(query)
+    q2 = 'select n.位置,n.区域 from extra_loc n left join placedf p on n.位置 = p.位置\
+        where p.位置 is null and p.区域 is null'
+    extra_loc = ps.sqldf(q2)
+    if extra_loc.empty == True:
+        print('没有什么需要更新的，现在返回')
+        start()
+        return
+    print('发现以下未收录区域和位置：')
+    print(extra_loc)
+    print('请检查是否有误，并确认是否加入'+place)
+    wait = 0
+    while wait == 0:
+        wait = 1
+        ask = input('是否更新'+place+'?(请确保原文件已关闭) [y/n] ')
+        if ask == 'y':
+            newL = pd.concat([placedf,extra_loc],axis=0)
+            newL.to_excel(place,index=False)
+            print('已成功更新，现在返回首页')
+        elif ask != 'n':
+            wait = 0
+    start()
+    return
+            
+    
 
 def checkAct(actions, action):
     if action == 0:
@@ -222,6 +254,8 @@ def checkAct(actions, action):
     elif action == 3:
         freqWords()
     elif action == 4:
+        generate_loc()
+    elif action == 5:
         print('选择了' + actions[action])
         print('自己关掉')
         return

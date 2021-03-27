@@ -14,7 +14,7 @@ def start():
     print('')
     print('~~~~😊家庭物品位置记录器·首页~~~~~~')
     print('')
-    actions = ['查看物品位置信息', '查看区域和位置', '补全excel', '调查重复物品、生成词云','更新收录地点excel', '退出']
+    actions = ['更新收录地点','补全excel','搜索物品', '查看区域和位置', '调查重复物品、生成词云', '退出']
     print('---------功能----------')
     i = 0
     for a in actions:
@@ -78,8 +78,7 @@ def look(place, file):
 
 def viewImg(target):
     tar_path = imgFolder + '\\*' + target + '*.*'
-    files = glob.glob(tar_path,
-                      recursive=True)
+    files = glob.glob(tar_path,recursive=True)
     for f in files:
         im = plt.imread(f)
         plt.imshow(im)
@@ -111,7 +110,7 @@ def searchIt():
     print('**所有区域和位置总览，超出50条的部分请使用搜索查看**')
     print(placedf[:50])
     print('**所有区域和位置总览结束**')
-    actions2 = ['搜索区域的位置信息（附图）', '搜索区域或位置的物品', '搜索位置的物品', '返回']
+    actions2 = ['搜索区域的信息（附图）', '按区域或位置搜索', '按位置搜索', '返回']
     print('---------功能----------')
     i = 0
     for a in actions2:
@@ -137,7 +136,7 @@ def fillForm():
         print(res2)
         wait = 0
         while wait == 0:
-            ask = input('是否进行修改？(如要进行修改请确保原文件已经关闭)[y/n]：')
+            ask = input('是否进行修改？(如要进行修改请确保原文件已经关闭) [y/n] ')
             if ask == 'y':
                 wait = 1
                 sqlstr = "select p.区域\
@@ -188,7 +187,6 @@ def freqWords():
     print('------------调查重复出现的物品-----------')
     splidf = maindf['物品'].str.split('、')
     splidf = splidf.dropna(axis=0)
-    print(splidf)
     list_all = []
     for i in splidf:
         if i != None:
@@ -202,7 +200,7 @@ def freqWords():
     print(summary)
     wait = 0
     while wait == 0:
-        ask = input('此处有一份词云报告，是否下载？[y/n]')
+        ask = input('此处有一份词云报告，是否下载？[y/n] ')
         if ask == 'y':
             wait = 1
             cloud(list_all)
@@ -245,15 +243,15 @@ def generate_loc():
     
 
 def checkAct(actions, action):
-    if action == 0:
+    if action == 2:
         searchLoc()
-    elif action == 1:
-        searchIt()
-    elif action == 2:
-        fillForm()
     elif action == 3:
-        freqWords()
+        searchIt()
+    elif action == 1:
+        fillForm()
     elif action == 4:
+        freqWords()
+    elif action == 0:
         generate_loc()
     elif action == 5:
         print('选择了' + actions[action])

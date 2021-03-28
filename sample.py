@@ -9,8 +9,13 @@ import matplotlib.pyplot as plt
 
 from IPython.core.pylabtools import figsize
 
+#TODO: 高亮关键词，可视化界面（？）
 
 def start():
+    global maindf
+    maindf = pd.read_excel(main,header=0)
+    global placedf
+    placedf = pd.read_excel(place,header=0)
     print('')
     print('~~~~😊家庭物品位置记录器·首页~~~~~~')
     print('')
@@ -260,9 +265,9 @@ def checkAct(actions, action):
 
 # 开始
 main = 'sample_main.xlsx'
-maindf = pd.read_excel(main,header=0)
+#maindf = pd.read_excel(main,header=0)
 place = 'sample_place.xlsx'
-placedf = pd.read_excel(place,header=0)
+#placedf = pd.read_excel(place,header=0)
 imgFolder = 'sample_image'
 start()
 
